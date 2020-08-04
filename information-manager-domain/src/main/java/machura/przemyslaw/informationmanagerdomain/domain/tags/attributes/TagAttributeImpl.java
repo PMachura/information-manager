@@ -7,9 +7,9 @@ import lombok.Data;
 
 
 @Data
-@Builder(builderClassName = "builder")
+@Builder(builderClassName = "Builder")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class TagAttributeDefault implements TagAttribute {
+public class TagAttributeImpl implements TagAttribute {
     private final String name;
     private final String value;
 }

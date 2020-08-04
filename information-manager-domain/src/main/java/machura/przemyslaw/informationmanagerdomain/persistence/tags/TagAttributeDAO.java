@@ -1,4 +1,4 @@
-package machura.przemyslaw.informationmanagerdomain.persistence;
+package machura.przemyslaw.informationmanagerdomain.persistence.tags;
 
 import lombok.Builder;
 import lombok.Data;

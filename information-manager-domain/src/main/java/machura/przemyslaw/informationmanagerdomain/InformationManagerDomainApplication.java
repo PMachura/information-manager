@@ -1,22 +1,38 @@
 package machura.przemyslaw.informationmanagerdomain;
 
 import lombok.RequiredArgsConstructor;
-import machura.przemyslaw.informationmanagerdomain.domain.taggeddata.TaggedTextDefault;
-import machura.przemyslaw.informationmanagerdomain.domain.tags.maintopictag.MainTopicTag;
-import machura.przemyslaw.informationmanagerdomain.persistence.TaggedTextDAO;
+import machura.przemyslaw.informationmanagerdomain.domain.taggeddata.TaggedText;
+import machura.przemyslaw.informationmanagerdomain.domain.tags.specified.maintopictag.MainTopicTag;
+import machura.przemyslaw.informationmanagerdomain.domain.tags.specified.maintopictag.MainTopicTagSpec;
+import machura.przemyslaw.informationmanagerdomain.persistence.tags.TaggedTextDAO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
+
+import java.util.List;
 
 @SpringBootApplication
 public class InformationManagerDomainApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(InformationManagerDomainApplication.class, args);
+    }
+
+    @Bean
+    RouterFunction<ServerResponse> routes(TaggedTextRepository repository) {
+        return RouterFunctions.route()
+                .GET("/tags", serverRequest -> ServerResponse.ok().body(repository.findAll(), TaggedTextDAO.class))
+                .build();
     }
 
 }
@@ -28,6 +44,7 @@ interface TaggedTextRepository extends ReactiveCrudRepository<TaggedTextDAO, Str
 @RequiredArgsConstructor
 class DataInitializer {
     private final TaggedTextRepository taggedTextRepository;
+    private final MainTopicTagSpec mainTopicTagSpec;
 
     @EventListener(ApplicationReadyEvent.class)
     public void insertData() {
@@ -40,35 +57,20 @@ class DataInitializer {
     }
 
     private Flux<TaggedTextDAO> createDataSamples() {
-        return Flux.just(
-                TaggedTextDAO.from(
-                        TaggedTextDefault.builder()
-                                .text("JVM is awesome")
-                                .tag(MainTopicTag.builder()
-                                        .mainTopicValue("JVM")
-                                        .build())
-                                .build()),
-                TaggedTextDAO.from(
-                        TaggedTextDefault.builder()
-                                .text("JVM JMM is hard")
-                                .tag(MainTopicTag.builder()
-                                        .mainTopicValue("JVM")
-                                        .build())
-                                .build()),
-                TaggedTextDAO.from(
-                        TaggedTextDefault.builder()
-                                .text("Spring is awesome")
-                                .tag(MainTopicTag.builder()
-                                        .mainTopicValue("Spring")
-                                        .build())
-                                .build()),
-                TaggedTextDAO.from(
-                        TaggedTextDefault.builder()
-                                .text("Spring is easy")
-                                .tag(MainTopicTag.builder()
-                                        .mainTopicValue("Spring")
-                                        .build())
-                                .build())
+        List<Tuple2<String, String>> textWithMainTopic = List.of(
+                Tuples.of("JVM is awesome", "JVM"),
+                Tuples.of("JVM JMM is hard", "JVM"),
+                Tuples.of("Spring is awesome", "Spring"),
+                Tuples.of("Spring is easy", "Spring")
         );
+
+        return Flux.fromIterable(textWithMainTopic)
+                .map(textWithMainTopicValue -> TaggedTextDAO.from(TaggedText.builder()
+                        .text(textWithMainTopicValue.getT1())
+                        .tag(mainTopicTagSpec.map(
+                                MainTopicTag.builder()
+                                        .mainValue(textWithMainTopicValue.getT2())
+                                        .build()))
+                        .build()));
     }
 }
