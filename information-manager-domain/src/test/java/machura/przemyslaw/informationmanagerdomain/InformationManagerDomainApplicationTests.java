@@ -2,9 +2,9 @@ package machura.przemyslaw.informationmanagerdomain;
 
 import io.vavr.control.Either;
 import machura.przemyslaw.informationmanagerdomain.domain.errors.Fault;
-import machura.przemyslaw.informationmanagerdomain.domain.tags.attributes.TagAttribute;
-import machura.przemyslaw.informationmanagerdomain.domain.tags.extraction.fromtext.placedin.FileProcessor;
-import machura.przemyslaw.informationmanagerdomain.domain.tags.extraction.fromtext.placedin.TagsAttributesExtractor;
+import machura.przemyslaw.informationmanagerdomain.domain.tags.TagAttr;
+import machura.przemyslaw.informationmanagerdomain.domain.tags.extraction.fromtext.deprecated.FileProcessor;
+import machura.przemyslaw.informationmanagerdomain.domain.tags.extraction.fromtext.deprecated.TagsAttributesExtractor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,16 +73,16 @@ class InformationManagerDomainApplicationTests {
                 .build();
         Map<String, String> expectedAttributesNameValue = tagWithAttributes.getAttributes();
 
-        Either<List<Fault>, List<TagAttribute>> extractionResult = tagsAttributesExtractor.extractAttributes(tag);
+        Either<List<Fault>, List<TagAttr>> extractionResult = tagsAttributesExtractor.extractAttributes(tag);
 
         Assertions.assertThat(extractionResult.isRight()).isTrue();
 
-        List<TagAttribute> extractedAttributes = extractionResult.get();
+        List<TagAttr> extractedAttributes = extractionResult.get();
         Assertions.assertThat(extractedAttributes.size()).isEqualTo(expectedAttributesNameValue.size());
 
-        for (TagAttribute tagAttribute : extractedAttributes) {
-            Assertions.assertThat(expectedAttributesNameValue.containsKey(tagAttribute.getName()));
-            Assertions.assertThat(tagAttribute.getValue()).isEqualTo(expectedAttributesNameValue.get(tagAttribute.getName()));
+        for (TagAttr tagAttr : extractedAttributes) {
+            Assertions.assertThat(expectedAttributesNameValue.containsKey(tagAttr.getKey()));
+            Assertions.assertThat(tagAttr.getValue()).isEqualTo(expectedAttributesNameValue.get(tagAttr.getKey()));
         }
     }
 

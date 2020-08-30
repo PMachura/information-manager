@@ -1,7 +1,7 @@
 package machura.przemyslaw.informationmanagerdomain.domain.tags;
 
-import machura.przemyslaw.informationmanagerdomain.domain.tags.attributes.TagAttribute;
-import machura.przemyslaw.informationmanagerdomain.domain.tags.attributes.TagAttributeSpec;
+import io.vavr.control.Either;
+import machura.przemyslaw.informationmanagerdomain.domain.errors.Fault;
 
 import java.util.Objects;
 import java.util.Set;
@@ -10,35 +10,45 @@ public interface TagSpec<T> {
 
     String getTagName();
 
-    Set<TagAttributeSpec<?>> getAttributesRestrictedTo();
+    Set<TagAttrSpec<?>> getSupportedAttr();
 
-    Set<String> getMainValuesRestrictedTo();
+    Set<TagAttrSpec<?>> getRequiredAttr();
 
-    Set<TagAttributeSpec<?>> getRequiredAttributes();
+    boolean isTextRequired();
 
-    Tag<T> map(T obj);
+    Tag toTag(T obj);
 
-    default boolean isMainValueCandidateValid(String mainValue) {
-        if (Objects.isNull(mainValue)) return false;
+    Either<Fault, T> toObj(Tag tag);
 
-        Set<String> mainValuesRestrictedTo = getMainValuesRestrictedTo();
-        if (Objects.isNull(mainValuesRestrictedTo) || mainValuesRestrictedTo.isEmpty()) {
-            return true;
+    default boolean isCompatible(Tag tag) {
+        if (!Objects.equals(getTagName(), tag.getName())) {
+            return false;
         }
-        return mainValuesRestrictedTo.contains(mainValue);
+
+        if (isTextRequired()
+                && (Objects.isNull(tag.getText()) || tag.getText().isBlank())) {
+            return false;
+        }
+
+        return areRequiredAttrsPresent(tag.getAttributes());
     }
 
-    default boolean isCompatible(TagAttribute tagAttribute) {
-        if(Objects.isNull(tagAttribute)) return false;
+    default boolean areRequiredAttrsPresent(Set<TagAttr> givenAttrs) {
+        return getRequiredAttr().stream()
+                .allMatch(requiredTagAttrSpec -> givenAttrs.stream().anyMatch(requiredTagAttrSpec::isCompatible));
+    }
 
-        Set<TagAttributeSpec<?>> tagsAttributesSpecsRestrictedTo = getAttributesRestrictedTo();
+    default boolean isCompatible(TagAttr tagAttr) {
+        if (Objects.isNull(tagAttr)) return false;
+
+        Set<TagAttrSpec<?>> tagsAttributesSpecsRestrictedTo = getSupportedAttr();
         if (Objects.isNull(tagsAttributesSpecsRestrictedTo) || tagsAttributesSpecsRestrictedTo.isEmpty()) {
             return true;
         }
 
         return tagsAttributesSpecsRestrictedTo
                 .stream()
-                .anyMatch(tagAttributeSpec -> tagAttributeSpec.isCompatible(tagAttribute));
+                .anyMatch(tagAttributeSpec -> tagAttributeSpec.isCompatible(tagAttr));
     }
 }
 

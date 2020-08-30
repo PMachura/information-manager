@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul id="events"></ul>
+<script type="application/javascript">
+    function add(message) {
+        const el = document.createElement("li");
+        el.innerHTML = message;
+        document.getElementById("events").appendChild(el);
+    }
+
+    const eventSource = new EventSource("/video-stream");
+    eventSource.onmessage = messageEvent => {
+       <!-- const movieEvent = JSON.parse(messageEvent.data); -->
+        add('Published test: ' );
+    }
+    eventSource.onopen = e => add('Connection opened');
+    eventSource.onerror = e => add('Connection closed');
+</script>
+</body>
+</html>

@@ -1,11 +1,9 @@
 package machura.przemyslaw.informationmanagerdomain.domain.tags;
 
-import machura.przemyslaw.informationmanagerdomain.domain.tags.attributes.TagAttribute;
-
 import java.util.Set;
 
-public interface Tag<T> {
+public interface Tag {
     String getName();
-    String getMainValue();
-    Set<TagAttribute> getAttributes();
+    String getText();
+    Set<TagAttr> getAttributes();
 }

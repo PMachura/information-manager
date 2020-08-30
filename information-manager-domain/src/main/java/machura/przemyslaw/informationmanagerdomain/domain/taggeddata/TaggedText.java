@@ -11,12 +11,12 @@ import java.util.List;
 public class TaggedText implements TaggedData<String> {
 
     @Singular
-    private final List<Tag<?>> tags;
+    private final List<Tag> tags;
     @NonNull
     private final String text;
 
     @Override
-    public List<Tag<?>> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 

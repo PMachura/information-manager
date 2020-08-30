@@ -6,6 +6,6 @@ import java.util.List;
 
 
 public interface TaggedData<T> {
-    List<Tag<?>> getTags();
+    List<Tag> getTags();
     T getData();
 }
