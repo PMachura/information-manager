@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/information-manager-client/information-manager-client.iml" filepath="$PROJECT_DIR$/information-manager-client/information-manager-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/information-manager-commons/information-manager-commons.iml" filepath="$PROJECT_DIR$/information-manager-commons/information-manager-commons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/information-manager-domain/information-manager-domain.iml" filepath="$PROJECT_DIR$/information-manager-domain/information-manager-domain.iml" />
+    </modules>
+  </component>
+</project>

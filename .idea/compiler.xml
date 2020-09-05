@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="information-manager-domain" />
+        <module name="information-manager-commons" />
+        <module name="information-manager-client" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="information-manager-client" target="14" />
+      <module name="information-manager-commons" target="14" />
+      <module name="information-manager-domain" target="14" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="information-manager-client" options="-parameters --enable-preview" />
+      <module name="information-manager-commons" options="-parameters" />
+      <module name="information-manager-domain" options="-parameters --enable-preview" />
+    </option>
+  </component>
+</project>
